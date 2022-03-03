@@ -6,7 +6,7 @@ import { useContext, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { commentData, commentSection, editCommentModal } from "../atoms/modalAtom";
 import { AuthContext } from "../context/AuthContext";
-
+import {PF} from "../pf"
 
 export default function UpdateComment() {
 
@@ -42,7 +42,7 @@ export default function UpdateComment() {
             }
         }
     }
-    const PF = "http://localhost:8800/images/";
+
   return (
     <div className='overflow-hidden'>
       <div onClick={() => {setEditCommentMode(false); setCommentMode(true)}} className="absolute bg-gray-300 opacity-70 w-screen z-10 top-0 h-screen" />

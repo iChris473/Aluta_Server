@@ -7,6 +7,7 @@ import { UserCircleIcon } from "@heroicons/react/solid"
 import { followers } from "../atoms/modalAtom"
 import { useRecoilState } from "recoil"
 import { useNavigate } from "react-router"
+import {PF} from "../pf"
 
 export default function HomeRightBar() {
 
@@ -53,7 +54,6 @@ export default function HomeRightBar() {
         getFans()
        }, [fetchFollowers])
       
-    const PF = "http://localhost:8800/images/";
   return (
     <div className="my-5 mx-1">
     <div className="flex flex-col space-y-5">

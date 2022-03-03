@@ -12,6 +12,7 @@ import { activeUsers, chatScreen, chatTopbar, commentSection, editCommentModal, 
 import { useRecoilState } from "recoil";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
+import {PF} from "../pf"
 
 export default function Topbar({messenger, home, profile, userPofile}) {
 
@@ -45,7 +46,7 @@ export default function Topbar({messenger, home, profile, userPofile}) {
     setChatBar([])
     navigate("/friend/profile")
   }
-  const PF = "http://localhost:8800/images/";
+
   return (
     <header className={`bg-gray-100 py-2 border-b shadow-sm ${messenger ? "fixed w-full" : "sticky"} z-50 top-0`}>
       <div className="flex flex-row items-center justify-between  max-w-5xl sm:mx-2 lg:mx-auto">

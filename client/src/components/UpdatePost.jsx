@@ -7,6 +7,7 @@ import { getPosts, postID } from "../atoms/modalAtom"
 import { Link, useNavigate } from "react-router-dom"
 import { ref, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
 import storage from "../firebase"
+import {PF} from "../pf"
 
 export default function UpdatePost() {
 
@@ -111,7 +112,7 @@ export default function UpdatePost() {
         console.log(error)
       }
   }
-  const PF = "http://localhost:8800/images/";
+
   return (
     <div className="sm:boxShadow mx-auto sm:mx-4 my-5 overflow-hidden">
       <div className="sm:p-2 mb-6">

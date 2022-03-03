@@ -5,6 +5,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { chatScreen, chatTopbar, getAMessage } from "../../atoms/modalAtom";
 import { AuthContext } from "../../context/AuthContext";
+import {PF} from "../../pf"
 
 export default function Conversation({data, online, active}) {
   const {user} = useContext(AuthContext)
@@ -22,7 +23,7 @@ export default function Conversation({data, online, active}) {
     getThisConversation()
   }, [data?.recieverId || online])
 
-  const PF = "http://localhost:8800/images/";
+
   return (
     <div onClick={() => {(data ? 
       ((data?.recieverId == user._id) ? setGetMessage([{conversationId: data._id, recieverId: data.senderId}]) : setGetMessage([{conversationId: data._id, recieverId: data.recieverId}])) : (setGetMessage([{conversationId: "", recieverId: online?.userId}])));

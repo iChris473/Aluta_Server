@@ -7,7 +7,7 @@ import { commentData, commentLength, commentSection, editCommentModal, postID } 
 import axios from 'axios'
 import { AuthContext } from "../context/AuthContext";
 import { format } from "timeago.js";
-
+import {PF} from "../pf"
 
 export default function CommentModal() {
 
@@ -90,8 +90,6 @@ export default function CommentModal() {
     }
   }
 
-  const PF = "http://localhost:8800/images/";
-console.log(allComments)
   return (
     <div className='overflow-hidden'>
       <div onClick={() => setCommentMode(false)} className="absolute bg-gray-300 opacity-70 w-screen z-10 top-0 h-screen" />

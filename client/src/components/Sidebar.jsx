@@ -7,6 +7,7 @@ import { useRecoilState } from "recoil";
 import { filteredUsers, followers, logoutModal, settingsModal } from "../atoms/modalAtom";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom"
+import {PF} from "../pf"
 
 export default function Sidebar({home, homePage}) {
     const [user, setUser] = useState([])
@@ -58,7 +59,7 @@ export default function Sidebar({home, homePage}) {
            console.log(err)
          }
        }
-       const PF = "http://localhost:8800/images/";
+
   return (
       <div className={`w-full ${homePage && "top-20 z-20 opacity-95 bg-white"} ${closeBar && 'hidden md:block'} fixed lg:w-48 xl:w-56 md:w-40`}>
           <div className="fullH overflow-y-scroll scrollbar scrollbar-thumb-gray-300 mt-12 ml-2 scrollbar-track-gray-200 scrollbar-thin p-2">

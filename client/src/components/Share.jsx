@@ -5,8 +5,9 @@ import { useContext, useRef, useState } from "react"
 import { useRecoilState } from "recoil";
 import { getPosts } from "../atoms/modalAtom";
 import { AuthContext } from "../context/AuthContext";
-import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import storage from "../firebase"
+import {PF} from "../pf"
 
 export default function Share() {
   const {user} = useContext(AuthContext)
@@ -33,7 +34,6 @@ export default function Share() {
         // const filename = Date.now() + file.name;
         // data.append("name", filename);
         // data.append("file", file);
-        const storage = getStorage()
 
         const firebaseImageRef = ref(storage, `${file.name}`)
 
@@ -69,7 +69,7 @@ export default function Share() {
       }
     }
   }
-  const PF = "http://localhost:8800/images/";
+
 
   return (
       <div className="boxShadow mx-2 mt-2 sm:mx-4 overflow-x-hidden p-5">

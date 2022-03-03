@@ -10,6 +10,7 @@ import { commentLength, commentSection, getPostID, openModal, postID } from "../
 import { useRecoilState } from "recoil";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom"
+import {PF} from "../pf"
 
 export default function Post({post, updateProfile}) {
 
@@ -59,7 +60,7 @@ export default function Post({post, updateProfile}) {
     }
 
     getReactions()
-  }, [getReactions])
+  }, [getReactions, post._id])
 
   // send like or dislike put request
   const handleLike = async () => {
@@ -90,7 +91,6 @@ export default function Post({post, updateProfile}) {
     getCommentNumbers()
   }, [post._id, totalC])
 
-  const PF = "http://localhost:8800/images/";
   return (
         <div key={post._id} className="boxShadow mx-2 mt-2 sm:mx-4 my-5">
           <div className="flex flex-col gap-5 p-2 !pb-6">

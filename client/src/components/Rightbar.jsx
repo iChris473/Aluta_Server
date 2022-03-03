@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom"
 import { followers, setFollows } from "../atoms/modalAtom";
 import { useRecoilState } from "recoil";
 import HomeRightBar from "./HomeRightBar";
+import {PF} from "../pf"
 
 export default function Rightbar({profile, userProfile}) {
   const [user, setUser] = useState([])
@@ -79,7 +80,7 @@ useEffect(() => {
      console.log(err)
    }
  }
-const PF = "http://localhost:8800/images/";
+
     
 // RIght bar dispalyed at the profile page
 

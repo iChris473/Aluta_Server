@@ -4,6 +4,7 @@ import axios from "axios";
 import { useContext, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import {PF} from "../pf"
 
 export default function UpdateProfile() {
     const navigate = useNavigate()
@@ -98,8 +99,6 @@ export default function UpdateProfile() {
         }
  
     }
-
-  const PF = "http://localhost:8800/images/";
 
   return (
       <div className="min-h-screen">

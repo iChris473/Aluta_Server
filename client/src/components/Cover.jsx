@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { chatTopbar, followers, getAMessage, setFollows } from "../atoms/modalAtom";
 import { AuthContext } from "../context/AuthContext";
+import {PF} from "../pf"
 
 export default function Cover({UserProfile}) {
 
@@ -16,8 +17,6 @@ export default function Cover({UserProfile}) {
   const [follow, setFollow] = useState(following)
   const [chatBar, setChatBar] = useRecoilState(chatTopbar)
   const [getMessage, setGetMessage] = useRecoilState(getAMessage)
-
-  const PF = "http://localhost:8800/images/";
 
   const currentUserProfile = JSON.parse(localStorage.getItem("currentUser"));
   const followUser = async e => {
