@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    .borderFull {
+      border-radius: 50%
+    }
+    .fullH {
+      height: calc(100vh - 79px)
+    }
+    .fullW {
+      height: calc(100vw - 300px)
+    }
+    .screenH {
+      height: calc(100vh - 96px);
+    }
+    .boxShadow{
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    }
+  }
