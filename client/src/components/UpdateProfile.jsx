@@ -4,6 +4,8 @@ import axios from "axios";
 import { useContext, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { ref, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
+import storage from "../firebase"
 import {PF} from "../pf"
 
 export default function UpdateProfile() {
@@ -27,10 +29,19 @@ export default function UpdateProfile() {
     const deletePP = async () => {
         setEditPP(false)
         try {
-          await axios.delete(`http://localhost:8800/api/rmvimage/${user.profilePicture}`) 
-          await axios.put(`http://localhost:8800/api/user/update/${user._id}`, {userID:user._id, profilePicture: ' '})
-          const getUpdatedUser = await axios.get(`http://localhost:8800/api/user/${user._id}`)
-          console.log(getUpdatedUser)
+            // delete cover photo
+            const deleteRef = ref(storage, `${user.profilePicture}`)
+
+            // Delete the file
+            deleteObject(deleteRef).then(() => {
+                // File deleted successfully
+                console.log('old picture deleted')
+            }).catch((error) => {
+                // Uh-oh, an error occurred!
+                console.log(error)
+            });
+          await axios.put(`${PF}/api/user/update/${user._id}`, {userID:user._id, profilePicture: ' '})
+          const getUpdatedUser = await axios.get(`${PF}/api/user/${user._id}`)
           dispatch({type: "LOGIN_SUCCESS", payload:getUpdatedUser.data});
           setPP(null)
         } catch (error) {
@@ -40,10 +51,19 @@ export default function UpdateProfile() {
     const deleteCP = async () => {
         setEditCover(false)
         try {
-          await axios.delete(`http://localhost:8800/api/rmvimage/${user.coverPhoto}`) 
-          await axios.put(`http://localhost:8800/api/user/update/${user._id}`, {userID:user._id, coverPhoto: ' '})
-          const getUpdatedUser = await axios.get(`http://localhost:8800/api/user/${user._id}`)
-          console.log(getUpdatedUser)
+            // delete cover photo
+            const deleteRef = ref(storage, `${user.coverPhoto}`)
+
+            // Delete the file
+            deleteObject(deleteRef).then(() => {
+                // File deleted successfully
+                console.log('old picture deleted')
+            }).catch((error) => {
+                // Uh-oh, an error occurred!
+                console.log(error)
+            });
+          await axios.put(`${PF}/api/user/update/${user._id}`, {userID:user._id, coverPhoto: ' '})
+          const getUpdatedUser = await axios.get(`${PF}/api/user/${user._id}`)
           dispatch({type: "LOGIN_SUCCESS", payload:getUpdatedUser.data});
           setCP(null)
         } catch (error) {
@@ -61,35 +81,89 @@ export default function UpdateProfile() {
         userRelationship.current.value && (newUser.relationship = userRelationship.current.value);
         
         if(coverFile){
-            const coverpicture = new FormData()
-            const coverName = Date.now() + coverFile.name;
-            coverpicture.append("name", coverName);
-            coverpicture.append("file", coverFile);
-            newUser.coverPhoto = coverName;
+            // const coverpicture = new FormData()
+            // const coverName = Date.now() + coverFile.name;
+            // coverpicture.append("name", coverName);
+            // coverpicture.append("file", coverFile);
+            // newUser.coverPhoto = coverName;
+
+            const firebaseImageRef = ref(storage, `${coverFile.name}`)
+
+            const metadata = {
+              contentType: 'image/jpeg',
+            };
+            
+            // Upload the file and metadata
             try {
-            (user.profilePicture && user.profilePicture != " ") && await axios.delete(`http://localhost:8800/api/rmvimage/${user.profilePicture}`) 
-            await axios.post("http://localhost:8800/api/upload", coverpicture)
-            } catch (err) {
-                console.log(err)
+                // delete old picture
+                if(user.coverPhoto && user.coverPhoto != " "){
+                    // delete previous file
+                     const deleteRef = ref(storage, `${user.coverPhoto}`)
+             
+                     // Delete the file
+                     deleteObject(deleteRef).then(() => {
+                       // File deleted successfully
+                       console.log('old picture deleted')
+                     }).catch((error) => {
+                       // Uh-oh, an error occurred!
+                       console.log(error)
+                     });
+                   }
+
+              // const uploadTask = uploadBytes(storageRef, file, metadata)
+              await uploadBytes(firebaseImageRef, coverFile, metadata)
+              .then(async snapshot => {
+                const downloadURL = await getDownloadURL(firebaseImageRef)
+                newUser.coverPhoto = downloadURL;
+              })
+            } catch (err){
+              console.log(err)      
             }
         }
         if(ppFile){
-            const newprofilepic = new FormData()
-            const ppName = Date.now() + ppFile.name;
-            newprofilepic.append("name", ppName);
-            newprofilepic.append("file", ppFile);
-            newUser.profilePicture = ppName;
+            // const newprofilepic = new FormData()
+            // const ppName = Date.now() + ppFile.name;
+            // newprofilepic.append("name", ppName);
+            // newprofilepic.append("file", ppFile);
+            // newUser.profilePicture = ppName;
+            const firebaseImageRef = ref(storage, `${ppFile.name}`)
+
+            const metadata = {
+              contentType: 'image/jpeg',
+            };
+            
+            // Upload the file and metadata
             try {
-            (user.coverPhoto && user.coverPhoto != " ") && await axios.delete(`http://localhost:8800/api/rmvimage/${user.coverPhoto}`) 
-            await axios.post("http://localhost:8800/api/upload", newprofilepic)
-            } catch (err) {
-                console.log(err)
+                // delete old picture
+                if(user.profilePicture && user.profilePicture != " "){
+                    // delete previous file
+                     const deleteRef = ref(storage, `${user.profilePicture}`)
+             
+                     // Delete the file
+                     deleteObject(deleteRef).then(() => {
+                       // File deleted successfully
+                       console.log('old picture deleted')
+                     }).catch((error) => {
+                       // Uh-oh, an error occurred!
+                       console.log(error)
+                     });
+                   }
+
+              // const uploadTask = uploadBytes(storageRef, file, metadata)
+              await uploadBytes(firebaseImageRef, ppFile, metadata)
+              .then(async snapshot => {
+                const downloadURL = await getDownloadURL(firebaseImageRef)
+                newUser.profilePicture = downloadURL;
+              })
+            } catch (err){
+              console.log(err)      
             }
+                   
         }
         
         try {
-            const res = await axios.put(`http://localhost:8800/api/user/update/${user._id}`, newUser)
-            const getUpdatedUser = await axios.get(`http://localhost:8800/api/user/${user._id}`)
+            const res = await axios.put(`${PF}/api/user/update/${user._id}`, newUser)
+            const getUpdatedUser = await axios.get(`${PF}/api/user/${user._id}`)
             setUpdating(false)
             dispatch({type: "LOGIN_SUCCESS", payload:getUpdatedUser.data});
             navigate(`/profile`); 
@@ -105,7 +179,7 @@ export default function UpdateProfile() {
           <div className="flex flex-col gap-3">
               <div className="md:pl-3 lg:px-1 mb-7">
                   <div className="relative">
-                      {(CP && user.coverPhoto != " ") || coverFile ? <img src={coverFile ? URL.createObjectURL(coverFile) : PF+user.coverPhoto} className="h-60 md:h-80 w-full object-cover rounded-sm" alt="" /> : (
+                      {(CP && user.coverPhoto != " ") || coverFile ? <img src={coverFile ? URL.createObjectURL(coverFile) : user.coverPhoto} className="h-60 md:h-80 w-full object-cover rounded-sm" alt="" /> : (
                           <div className="rounded-sm  w-full h-60 bg-gray-200 relative">
                               <PhotographIcon className="h-16 text-gray-400 absolute transform top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer" />
                           </div>
@@ -124,7 +198,7 @@ export default function UpdateProfile() {
                       {coverFile && <XIcon onClick={() => setCoverFile(null)} className="bg-white h-10 p-2  text-pink-400 borderFull absolute bottom-2 right-11 cursor-pointer" />}
                   </div>
                   <div className="relative">
-                      {(PP && user.profilePicture != " ") || ppFile ? <img src={ppFile ? URL.createObjectURL(ppFile) : PF+user.profilePicture} className="h-36 w-36 p-1 object-cover borderFull border-2 bg-white border-white absolute -bottom-28 transform left-1/2 -translate-x-1/2 -translate-y-1/2" alt="" /> : <UserCircleIcon className="h-36 w-36 object-cover borderFull bg-white absolute -bottom-28 transform left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-300" />}
+                      {(PP && user.profilePicture != " ") || ppFile ? <img src={ppFile ? URL.createObjectURL(ppFile) : user.profilePicture} className="h-36 w-36 p-1 object-cover borderFull border-2 bg-white border-white absolute -bottom-28 transform left-1/2 -translate-x-1/2 -translate-y-1/2" alt="" /> : <UserCircleIcon className="h-36 w-36 object-cover borderFull bg-white absolute -bottom-28 transform left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-300" />}
 
                       <CameraIcon onClick={() => {setEditCover(false); setEditPP(!editPP)}} className={`text-white h-10 p-2 borderFull absolute transform right-[30%] -bottom-[50px] -translate-x-1/2 -translate-y-1/2 cursor-pointer ${ppFile ? "bg-pink-400 text-white" : "text-pink-400 bg-white"}`} />
 
@@ -169,7 +243,7 @@ export default function UpdateProfile() {
           </div>
 
           <div className="flex items-center justify-between mb-10 mx-10">
-              <Link to={`/profile/${user.username}`}>
+              <Link to={"/profile"}>
                   <button className="text-gray-700 border rounded-md border-gray-600 p-2 text-xs">back</button>
               </Link>
               <button onClick={updateProfile} className="bg-green-500 text-white rounded-md p-2 font-semibold text-xs">{updating ? 'Updating...' : 'update profile'}</button>

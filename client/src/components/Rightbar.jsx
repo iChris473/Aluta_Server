@@ -23,16 +23,16 @@ useEffect(() => {
   let allCurrentFollowers = []
   let allCurrentFollowing = []
   const getUsers = async () => {
-     const res = await axios.get(`http://localhost:8800/api/user/fans/${profile ? currentUser._id : currentUserProfile._id}`)
+     const res = await axios.get(`${PF}/api/user/fans/${profile ? currentUser._id : currentUserProfile._id}`)
     // get followers data
     res.data.followers.forEach(async f => {
-      const allFan = await axios.get(`http://localhost:8800/api/user/${f}`)
+      const allFan = await axios.get(`${PF}/api/user/${f}`)
       const all = allCurrentFollowers.filter(f => f._id != allFan.data._id).concat(allFan.data)
       setAllFollowers(all)
     })
     // get following data
     res.data.following.map(async f => {
-      const allFan = await axios.get(`http://localhost:8800/api/user/${f}`)
+      const allFan = await axios.get(`${PF}/api/user/${f}`)
       const all = allCurrentFollowing.filter(f => f._id != allFan.data._id).concat(allFan.data)
       setAllFollowing(all)
     })
@@ -51,7 +51,7 @@ const navigate = useNavigate()
     if(e.target.id == currentUser._id){
       navigate("/profile")
     } else{
-      const res = await axios.get(`http://localhost:8800/api/user/${e.target.id}`)
+      const res = await axios.get(`${PF}/api/user/${e.target.id}`)
       localStorage.setItem("currentUser", null)
       localStorage.setItem("currentUser", JSON.stringify(res.data))
       navigate("/friend/profile")
@@ -61,7 +61,7 @@ const navigate = useNavigate()
 useEffect(() => {
   const getFans = async () => {
     try {
-      await axios.get(`http://localhost:8800/api/user/fans/${currentUser._id}`)
+      await axios.get(`${PF}/api/user/fans/${currentUser._id}`)
       .then(fans => {
         setFollowing(fans.data.following)
       })
@@ -74,7 +74,7 @@ useEffect(() => {
 
  const followUser = async e => {
    try {
-    following.includes(e.target.id) ? (await axios.put(`http://localhost:8800/api/user/unfollow/${e.target.id}`, {userID:currentUser._id})) : (await axios.put(`http://localhost:8800/api/user/follow/${e.target.id}`, {userID:currentUser._id}))
+    following.includes(e.target.id) ? (await axios.put(`${PF}/api/user/unfollow/${e.target.id}`, {userID:currentUser._id})) : (await axios.put(`${PF}/api/user/follow/${e.target.id}`, {userID:currentUser._id}))
     setFetchFollowers(!fetchFollowers)
    } catch (err) {
      console.log(err)
@@ -109,7 +109,7 @@ useEffect(() => {
           <div  className="space-y-3 mt-2 flex flex-wrap md:flex-col">
               {allFollowers.map(data => (
               <div key={data._id} className="flex items-center justify-center md:justify-start w-1/2 gap-3">
-                {data.profilePicture ? <img onClick={getUserData} id={data._id}  src={PF + data.profilePicture} className="borderFull h-10 w-10 cursor-pointer" alt="" /> : <UserCircleIcon onClick={getUserData} id={data._id} className="h-10 w-10 cursor-pointer text-gray-400" />}
+                {data.profilePicture ? <img onClick={getUserData} id={data._id}  src={data.profilePicture} className="borderFull h-10 w-10 cursor-pointer" alt="" /> : <UserCircleIcon onClick={getUserData} id={data._id} className="h-10 w-10 cursor-pointer text-gray-400" />}
                 <span onClick={getUserData} id={data._id} className="italic text-sm cursor-pointer">{data.username}</span>
               </div>
               ))}
@@ -123,7 +123,7 @@ useEffect(() => {
           <div  className="space-y-3 mt-2 flex flex-wrap md:flex-col">
               {allFollowing.map(data => (
               <div key={data._id} className="flex items-center justify-center md:justify-start w-1/2 gap-3">
-                {data.profilePicture ? <img onClick={getUserData} id={data._id} src={PF + data.profilePicture} className="borderFull h-10 w-10 cursor-pointer" alt="" /> : <UserCircleIcon onClick={getUserData} id={data._id} className="h-10 w-10 cursor-pointer text-gray-400" />}
+                {data.profilePicture ? <img onClick={getUserData} id={data._id} src={data.profilePicture} className="borderFull h-10 w-10 cursor-pointer" alt="" /> : <UserCircleIcon onClick={getUserData} id={data._id} className="h-10 w-10 cursor-pointer text-gray-400" />}
                 <span onClick={getUserData} id={data._id} className="italic text-sm cursor-pointer">{data.username}</span>
               </div>
               ))} 
@@ -165,7 +165,7 @@ const UsersRightBar = () => {
             {
               allFollowers?.map(data => (
               <div key={data._id} className="flex items-center justify-center md:justify-start w-1/2 gap-3">
-                {data.profilePicture ? <img onClick={getUserData} id={data._id} src={PF + data.profilePicture} className="borderFull h-10 w-10 cursor-pointer" alt="" /> : <UserCircleIcon onClick={getUserData} id={data._id} className="h-10 w-10 cursor-pointer text-gray-400" />}
+                {data.profilePicture ? <img onClick={getUserData} id={data._id} src={data.profilePicture} className="borderFull h-10 w-10 cursor-pointer" alt="" /> : <UserCircleIcon onClick={getUserData} id={data._id} className="h-10 w-10 cursor-pointer text-gray-400" />}
                 <span onClick={getUserData} id={data._id} className="italic text-sm cursor-pointer">{data.username}</span>
               </div>
               ))
@@ -179,7 +179,7 @@ const UsersRightBar = () => {
             {
               allFollowing.map(data => (
               <div key={data._id} className="flex items-center justify-center md:justify-start w-1/2 gap-3">
-                {data.profilePicture ? <img onClick={getUserData} id={data._id} src={PF + data.profilePicture} className="borderFull h-10 w-10 cursor-pointer" alt="" /> : <UserCircleIcon onClick={getUserData} id={data._id} className="h-10 w-10 cursor-pointer text-gray-400" />}
+                {data.profilePicture ? <img onClick={getUserData} id={data._id} src={data.profilePicture} className="borderFull h-10 w-10 cursor-pointer" alt="" /> : <UserCircleIcon onClick={getUserData} id={data._id} className="h-10 w-10 cursor-pointer text-gray-400" />}
                 <span onClick={getUserData} id={data._id} className="italic text-sm cursor-pointer">{data.username}</span>
               </div>
               ))

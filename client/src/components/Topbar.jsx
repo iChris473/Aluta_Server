@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { useContext } from "react"
 import { AuthContext } from "../context/AuthContext";
 import ChatSideBar from "./messenger/ChatSideBar";
-import { activeUsers, chatScreen, chatTopbar, commentSection, editCommentModal, filteredUsers, getAMessage, getPosts, logoutModal, openModal, settingsModal } from "../atoms/modalAtom";
+import { activeUsers, chatScreen, chatTopbar, commentSection, editCommentModal, filteredUsers, getAMessage, getPosts, logoutModal, mobilView, openModal, settingsModal } from "../atoms/modalAtom";
 import { useRecoilState } from "recoil";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
@@ -24,6 +24,7 @@ export default function Topbar({messenger, home, profile, userPofile}) {
   const [searchedUsers, setSearchedUsers] = useRecoilState(filteredUsers)
   const [mobile, setMobile] = useState(false)
   const [openSetting, setOpenSetting] = useRecoilState(settingsModal)
+  const [homeMobile, setHomeMobile] = useRecoilState(mobilView)
   const [getpost, setGetPosts] = useRecoilState(getPosts)
   const navigate = useNavigate()
 
@@ -38,7 +39,8 @@ export default function Topbar({messenger, home, profile, userPofile}) {
   }, [modalState, openSetting, commentMode, editCommentMode, logout])
 
   const handleMenu = () => {
-    setMobile(!mobile)
+    setHomeMobile(true);
+    setMobile(true)
   }
   const getUserData = async e => {
     localStorage.setItem("currentUser", null)
@@ -49,19 +51,19 @@ export default function Topbar({messenger, home, profile, userPofile}) {
 
   return (
     <header className={`bg-gray-100 py-2 border-b shadow-sm ${messenger ? "fixed w-full" : "sticky"} z-50 top-0`}>
-      <div className="flex flex-row items-center justify-between  max-w-5xl sm:mx-2 lg:mx-auto">
+      <div className="flex flex-row items-center justify-between max-w-5xl sm:mx-2 lg:mx-auto">
         {/* Left Div */}
         <div className="flex items-center ml-3">
-          <div onClick={() => {setChatBar([]); setConversation([]);}} className="" >
+          <div onClick={() => {setChatBar([]); setConversation([]); setChatView(false);}} className="" >
             {chatBar.length == 0 ?
               <Link to={"/"}>
-              <img src={logo} className="w-20" alt="" />
+              <img onClick={() => setHomeMobile(false)} src={logo} className="h-12 md:h-20" alt="" />
             </Link> :
-              <ArrowLeftIcon onClick={() => {setConversation([]); setChatView(false)}} className="w-6 cursor-pointer text-gray-500" />}
+              <ArrowLeftIcon className="w-6 cursor-pointer text-gray-500" />}
           </div>
             {chatBar.length !== 0 &&
             <div onClick={getUserData} className="flex items-center cursor-pointer">
-              {chatBar.profilePicture ? <img src={PF + chatBar.profilePicture} className="w-12 h-12 m-3 object-cover borderFull" alt="" /> : <UserCircleIcon className="h-12 m-3 text-gray-500" />}
+              {chatBar.profilePicture ? <img src={chatBar.profilePicture} className="w-12 h-12 m-3 object-cover borderFull" alt="" /> : <UserCircleIcon className="h-12 m-3 text-gray-500" />}
               <div className="flex flex-col">
                 <p className="text-gray-600 text-lg font-semibold ">{chatBar.username}</p>
                 {socketUser.some(o => o.userId == chatBar._id) && <p className="text-gray-600 text-xs">online</p>}
@@ -90,12 +92,12 @@ export default function Topbar({messenger, home, profile, userPofile}) {
               <CogIcon onClick={() => setOpenSetting(true)} className="h-5 text-gray- cursor-pointer" />
           </div>
           {
-            !mobile ? <MenuAlt3Icon onClick={handleMenu} className="h-5 md:hidden text-gray-600 mr-2" /> :
-            <XIcon onClick={handleMenu} className="h-5 md:hidden sm:mr-2" />
+            !mobile ? <MenuAlt3Icon  onClick={handleMenu} className={`${(modalState || openSetting || commentMode || editCommentMode || logout) && "!hidden"} h-5 md:hidden text-gray-600 mr-2`} /> :
+            <XIcon onClick={() => {setHomeMobile(false); setMobile(false)}}  className="h-5 md:hidden mr-2" />
           } 
           <Link to={"/profile"}>
               {user.profilePicture && user.profilePicture !== " " ?
-                <img className="h-8 w-8 hidden sm:inline-block  sm:h-10 sm:w-10 borderFull object-cover" src={PF+user.profilePicture} alt="" />  : 
+                <img className="h-8 w-8 hidden sm:inline-block  sm:h-10 sm:w-10 borderFull object-cover" src={user.profilePicture} alt="" />  : 
                 <UserCircleIcon className="h-8 w-8 hidden sm:inline-block text-gray-400 sm:h-10 sm:w-10" />
               }
           </Link>
@@ -107,12 +109,12 @@ export default function Topbar({messenger, home, profile, userPofile}) {
               {
                 !mobile ? 
                 <MenuAlt3Icon onClick={handleMenu} className="h-5 md:hidden text-gray-600 mr-2" /> :
-                <XIcon onClick={handleMenu} className="h-5 md:hidden sm:mr-2" />
+                <XIcon onClick={() => {setHomeMobile(false); setMobile(false)}} className="h-10 md:hidden" />
               }
             </div>
           )
         }
-        {mobile && (messenger ? <ChatSideBar /> : <Sidebar homePage />)}
+        {mobile && <Sidebar homePage />}
       </div>
     </header>
   )

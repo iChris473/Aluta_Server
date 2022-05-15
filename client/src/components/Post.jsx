@@ -25,7 +25,7 @@ export default function Post({post, updateProfile}) {
 // get Posts
   useEffect(() => {
     const fetchPost = async () => {
-      const res = await axios.get(`http://localhost:8800/api/user/${post.userID}`)
+      const res = await axios.get(`${PF}/api/user/${post.userID}`)
       setUser(res.data)
     }
     return fetchPost()
@@ -42,7 +42,7 @@ export default function Post({post, updateProfile}) {
   useEffect(() => {
 
     const getReactions = async () => {
-      await axios.get(`http://localhost:8800/api/post/react/${post._id}`)
+      await axios.get(`${PF}/api/post/react/${post._id}`)
       .then(res => {
         if(res.data.like.includes(currentUser._id)){
           setLiked(true)
@@ -64,11 +64,11 @@ export default function Post({post, updateProfile}) {
 
   // send like or dislike put request
   const handleLike = async () => {
-    await axios.put(`http://localhost:8800/api/post/react?like=${post._id}`, {userID:currentUser._id})
+    await axios.put(`${PF}/api/post/react?like=${post._id}`, {userID:currentUser._id})
     .then(() => setGetReactions(!getReactions))
   }
   const handleUnlike = async () => {
-    await axios.put(`http://localhost:8800/api/post/react?dislike=${post._id}`, {userID:currentUser._id})
+    await axios.put(`${PF}/api/post/react?dislike=${post._id}`, {userID:currentUser._id})
     .then(() => setGetReactions(!getReactions))
   }
 
@@ -78,14 +78,14 @@ export default function Post({post, updateProfile}) {
     if(user._id == currentUser._id ){
       navigate("/profile")
     } else {
-      const res = await axios.get(`http://localhost:8800/api/user/${e.target.id}`)
+      const res = await axios.get(`${PF}/api/user/${e.target.id}`)
       localStorage.setItem("currentUser", JSON.stringify(res.data))
       navigate("/friend/profile")
     }
 }
   useEffect(() => {
     const getCommentNumbers = async () => {
-      const res = await axios.get(`http://localhost:8800/api/post/comment/get/${post._id}`)
+      const res = await axios.get(`${PF}/api/post/comment/get/${post._id}`)
       setCommentNumber(res.data.length)
     }
     getCommentNumbers()
@@ -100,7 +100,7 @@ export default function Post({post, updateProfile}) {
                     {
                       user.profilePicture && user.profilePicture !== " " ?
                         <img id={user._id} onClick={getUserData} className="h-8 w-8 sm:h-10 sm:w-10 borderFull object-cover"
-                      src={PF+user.profilePicture} alt="" /> :
+                      src={user.profilePicture} alt="" /> :
                         <UserCircleIcon id={user._id} onClick={getUserData} className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
                     }
                   </div>

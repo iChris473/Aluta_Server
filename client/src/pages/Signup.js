@@ -3,7 +3,7 @@ import { useContext ,useRef } from "react"
 import { Link } from "react-router-dom"
 import { signupCall } from "../ApiCalls"
 import { AuthContext } from "../context/AuthContext"
-
+import {PF} from "../pf"
 import logo from "../assets/aluta_logo.png"
 
 export default function Signup() {

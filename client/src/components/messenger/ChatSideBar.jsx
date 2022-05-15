@@ -5,7 +5,7 @@ import axios from "axios"
 import { AuthContext } from "../../context/AuthContext";
 import { activeUsers } from "../../atoms/modalAtom";
 import { useRecoilState } from "recoil";
-
+import {PF} from "../../pf"
 
 
 export default function ChatSideBar() {
@@ -16,7 +16,7 @@ export default function ChatSideBar() {
 
   useEffect(() => {
     const getConversation = async () => {
-      const res = await axios.get(`http://localhost:8800/api/chat/get/${user._id}`)
+      const res = await axios.get(`${PF}/api/chat/get/${user._id}`)
       setAllConversations(res.data)
     }
     getConversation()

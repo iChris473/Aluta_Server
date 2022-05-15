@@ -29,7 +29,7 @@ export default function CommentModal() {
     useEffect(() => {
       const getAllComment = async () => {
         try {
-          const res = await axios.get(`http://localhost:8800/api/post/comment/get/${postid}`)
+          const res = await axios.get(`${PF}/api/post/comment/get/${postid}`)
           setCommentUser(res.data)
         } catch (err) {
           console.log(err)
@@ -47,7 +47,7 @@ export default function CommentModal() {
       await Promise.all(
         commentUser.map( async comment => {
           try {
-            const res = await axios.get(`http://localhost:8800/api/user/${comment.userId}`)
+            const res = await axios.get(`${PF}/api/user/${comment.userId}`)
             return totalComments.push({user: res.data, text: comment.text, time: comment.time, id: comment._id, date: comment.createdAt})
           } catch (err) {
             console.log(err)
@@ -68,7 +68,7 @@ export default function CommentModal() {
         time: Date.now()
       }
       try {
-        const res = await axios.post(`http://localhost:8800/api/post/comment/create`, newComment)
+        const res = await axios.post(`${PF}/api/post/comment/create`, newComment)
         setAllComments(allComments.concat({user, text: messageRef.current.value}))
         messageRef.current.value = ''
         setCommentNumber(!commentNumber)
@@ -80,7 +80,7 @@ export default function CommentModal() {
     const deleteComment = async e => {
       console.log(e.target.id, e.target.name)
     try {
-      await axios.delete(`http://localhost:8800/api/post/comment/delete/${postid}?userid=${user._id}&text=${e.target.id}&time=${e.target.name}`)
+      await axios.delete(`${PF}/api/post/comment/delete/${postid}?userid=${user._id}&text=${e.target.id}&time=${e.target.name}`)
       setCloseEdit(true)
       const newComment = allComments.filter(c => c.user._id != user.id && c.text != e.target.id)
       setAllComments(newComment)
@@ -105,7 +105,7 @@ export default function CommentModal() {
                 <div key={comment.id} className="flex gap-3 justify-start">
                   {comment.user.profilePicture ? 
                   <img className="h-8 w-8 sm:h-10 sm:w-10 borderFull object-cover"
-                  src={PF+comment.user.profilePicture} alt='' /> : 
+                  src={comment.user.profilePicture} alt='' /> : 
                   <UserCircleIcon className='h-7 md:h-10 text-gray-500' />}
                   <div className='bg-gray-100 w-[88%] rounded-lg p-2 flex flex-col relative'>
                     {

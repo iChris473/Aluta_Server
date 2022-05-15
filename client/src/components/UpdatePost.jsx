@@ -20,7 +20,7 @@ export default function UpdatePost() {
 
   useEffect(() => {
     const getSinglePost = async () => {
-      await axios.get(`http://localhost:8800/api/post/get/${postid.postid}`)
+      await axios.get(`${PF}/api/post/get/${postid.postid}`)
         .then(res => setPost(res.data))
     }
     getSinglePost()
@@ -63,7 +63,7 @@ export default function UpdatePost() {
     };
 
       if (file) {
-        if(postImg && postImg != 0){
+        if(postImg && postImg != " "){
          // delete previous file
           const deleteRef = ref(storage, `${post.img}`)
   
@@ -102,7 +102,7 @@ export default function UpdatePost() {
       }
 
       try {
-        await axios.put(`http://localhost:8800/api/post/update/${postid.postid}`, newPost)
+        await axios.put(`${PF}/api/post/update/${postid.postid}`, newPost)
           .then(() => {
             navigate("/");
             setGetPosts(!getPosts);

@@ -1,7 +1,16 @@
+const express = require('express')
+const cors = require("cors")
+const server = express()
+server.use(cors())
 
+const PORT = process.env.PORT || 3000;
+
+server.use((req, res) => res.send("Yeah... Aluta socket server is running"))
+  
+  
 const io = require("socket.io")(8900, {
     cors:{
-        origin:"http://localhost:2003"
+        origin:"https://aluta.vercel.app"
     }
 })
 
@@ -35,7 +44,7 @@ io.on("connection", socket => {
     })
 
     const getUser = userId => users.find(user => user.userId === userId)
-
+    
     // send and get message
     socket.on("sendMessage", ({senderId, recieverId, text, _id}) => {
         const user = getUser(recieverId);
@@ -49,3 +58,4 @@ io.on("connection", socket => {
     }) 
 })
 
+server.listen(PORT, () => console.log(`running on ${PORT}`))

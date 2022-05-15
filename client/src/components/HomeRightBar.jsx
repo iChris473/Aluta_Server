@@ -18,7 +18,7 @@ export default function HomeRightBar() {
     const [filterInput, setFilterInput] = useState('')
     useEffect(() => {
         const getUsers = async () => {
-            const res = await axios.get(`http://localhost:8800/api/search/user?username=${filterInput}`)
+            const res = await axios.get(`${PF}/api/search/user?username=${filterInput}`)
             setUser(res.data)
         }
         getUsers()
@@ -27,14 +27,14 @@ export default function HomeRightBar() {
     const navigate = useNavigate()
 
     const getUserData = async e => {
-        const res = await axios.get(`http://localhost:8800/api/user/${e.target.id}`)
+        const res = await axios.get(`${PF}/api/user/${e.target.id}`)
         localStorage.setItem("currentUser", null)
         localStorage.setItem("currentUser", JSON.stringify(res.data))
         navigate("/friend/profile")
     }
     const followUser = async e => {
         try {
-         following.includes(e.target.id) ? (await axios.put(`http://localhost:8800/api/user/unfollow/${e.target.id}`, {userID:currentUser._id})) : (await axios.put(`http://localhost:8800/api/user/follow/${e.target.id}`, {userID:currentUser._id}))
+         following.includes(e.target.id) ? (await axios.put(`${PF}/api/user/unfollow/${e.target.id}`, {userID:currentUser._id})) : (await axios.put(`http://localhost:8800/api/user/follow/${e.target.id}`, {userID:currentUser._id}))
          setFetchFollowers(!fetchFollowers)
         } catch (err) {
           console.log(err)
@@ -43,7 +43,7 @@ export default function HomeRightBar() {
       useEffect(() => {
         const getFans = async () => {
           try {
-            await axios.get(`http://localhost:8800/api/user/fans/${currentUser._id}`)
+            await axios.get(`${PF}/api/user/fans/${currentUser._id}`)
             .then(fans => {
               setFollowing(fans.data.following)
             })
@@ -69,7 +69,7 @@ export default function HomeRightBar() {
               <div className="relative flex items-center justify-center gap-3">
                 {
                   data.profilePicture ?
-                    <img src={PF + data.profilePicture} className="h-8 w-8 sm:h-10 sm:w-10 borderFull object-cover" alt="" /> :
+                    <img src={data.profilePicture} className="h-8 w-8 sm:h-10 sm:w-10 borderFull object-cover" alt="" /> :
                     <UserCircleIcon className="h-8 w-8 text-gray-400 sm:h-10 sm:w-10" />
                 }
                 {socketUser.some(s => s.userId == data._id) && <span className="bg-green-500 borderFull h-[10px] w-[10px] absolute top-1 left-7"></span>}

@@ -4,7 +4,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import {Link} from "react-router-dom"
 import { useRecoilState } from "recoil";
-import { filteredUsers, followers, logoutModal, settingsModal } from "../atoms/modalAtom";
+import { filteredUsers, followers, logoutModal, mobilView, settingsModal } from "../atoms/modalAtom";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom"
 import {PF} from "../pf"
@@ -16,18 +16,29 @@ export default function Sidebar({home, homePage}) {
     const [openSetting, setOpenSetting] = useRecoilState(settingsModal)
     const [searchedUsers, setSearchedUsers] = useRecoilState(filteredUsers)
     const [logout, setLogout] = useRecoilState(logoutModal)
+    const [loading, setLoading] = useState(true)
+    const [errMssg, setErrMessg] = useState(false)
+    const [homeMobile, setHomeMobile] = useRecoilState(mobilView)
     const navigate = useNavigate()
 
     useEffect(() => {
         const getUsers = async () => {
-            await axios.get(`http://localhost:8800/api/search/user?username=${searchedUsers}`)
-            .then(res => setUser(res.data))
+          try {
+            setErrMessg(false)
+            await axios.get(`${PF}/api/search/user?username=${searchedUsers}`)
+            .then(res => {setUser(res.data); setLoading(false)})
+          } catch (err) {
+            console.log(err)
+            setLoading(false)
+            setErrMessg(true)
+          }
+            
         }
         getUsers()
     }, [searchedUsers])
 
     const getUserData = async e => {
-        const res = await axios.get(`http://localhost:8800/api/user/${e.target.id}`)
+        const res = await axios.get(`${PF}/api/user/${e.target.id}`)
         localStorage.setItem("currentUser", null)
         localStorage.setItem("currentUser", JSON.stringify(res.data))
         navigate("/friend/profile")
@@ -39,7 +50,7 @@ export default function Sidebar({home, homePage}) {
     useEffect(() => {
         const getFans = async () => {
           try {
-            await axios.get(`http://localhost:8800/api/user/fans/${currentUser._id}`)
+            await axios.get(`${PF}/api/user/fans/${currentUser._id}`)
             .then(fans => {
               setFollowing(fans.data.following)
             })
@@ -53,7 +64,7 @@ export default function Sidebar({home, homePage}) {
     
        const followUser = async e => {
          try {
-          following.includes(e.target.id) ? (await axios.put(`http://localhost:8800/api/user/unfollow/${e.target.id}`, {userID:currentUser._id})) : (await axios.put(`http://localhost:8800/api/user/follow/${e.target.id}`, {userID:currentUser._id}))
+          following.includes(e.target.id) ? (await axios.put(`${PF}/api/user/unfollow/${e.target.id}`, {userID:currentUser._id})) : (await axios.put(`${PF}/api/user/follow/${e.target.id}`, {userID:currentUser._id}))
           setFetchFollowers(!fetchFollowers)
          } catch (err) {
            console.log(err)
@@ -61,10 +72,10 @@ export default function Sidebar({home, homePage}) {
        }
 
   return (
-      <div className={`w-full ${homePage && "top-20 z-20 opacity-95 bg-white"} ${closeBar && 'hidden md:block'} fixed lg:w-48 xl:w-56 md:w-40`}>
+      <div className={`w-full ${homePage && "top-20 z-20 bg-white"} ${closeBar && 'hidden md:block'} fixed lg:w-48 xl:w-56 md:w-40`}>
           <div className="fullH overflow-y-scroll scrollbar scrollbar-thumb-gray-300 mt-12 ml-2 scrollbar-track-gray-200 scrollbar-thin p-2">
               <h2 className="font-semibold text-gray-600 my-4">Hi {currentUser.username}</h2>
-              <div className="flex flex-col items-start gap-4">
+              <div onClick={() => setHomeMobile(false)} className="flex flex-col items-start gap-4 mb-10">
                   <Link to="/messenger">
                       <div className="flex">
                           <ChatIcon className="h-5 mr-2 text-gray-600" />
@@ -77,7 +88,7 @@ export default function Sidebar({home, homePage}) {
                    </div>
                   <div className="flex">
                       <Link to='/profile' >
-                          {currentUser.profilePicture ? <img className="h-6 w-6 mr-2 borderFull object-cover" src={PF+ currentUser.profilePicture} alt="" /> : <UserCircleIcon className="h-6 text-gray-600 mr-2" />}
+                          {currentUser.profilePicture ? <img className="h-6 w-6 mr-2 borderFull object-cover" src={currentUser.profilePicture} alt="" /> : <UserCircleIcon className="h-6 text-gray-600 mr-2" />}
                       </Link>
                       <Link to='/profile' >
                           <span className="text-sm">Profile</span>
@@ -88,13 +99,17 @@ export default function Sidebar({home, homePage}) {
                     Log Out
                   </button>}
                   <div className='md:hidden bg-gray-400 w-full h-[1px]' />
-                    <div className="md:hidden w-full">
+                    <div className="md:hidden w-full  mb-20">
                         <p className="font-bold text-lg mb-5">All users</p>
-                        { user.filter(res => res._id !== currentUser._id).map(data => (
+                        {loading && <p className="text-gray-500 font-semibold text-lg text-center my-10">Fetching users...</p> }
+                        {errMssg && <p className="text-red-400 opacity-60 font-bold text-lg text-center my-10">Check your internet connection</p> }
+                        { 
+                        user.filter(res => res._id !== currentUser._id)
+                        .map(data => (
                             <div key={data._id} className="flex items-center justify-between w-[90%] space-x-2">
                               <div className="relative flex items-center justify-center gap-3">
                                   {data.profilePicture ?
-                                    <img src={PF+data.profilePicture} className="h-10 w-10 object-cover borderFull my-2" alt="" /> :
+                                    <img src={data.profilePicture} className="h-10 w-10 object-cover borderFull my-2" alt="" /> :
                                     <UserCircleIcon className="h-10 w-10 my-2 text-gray-400" />
                                   }
                                    {socketUser.some(s => s.userId == data._id) && <span className="bg-green-500 borderFull h-[10px] w-[10px] absolute top-2 left-7"></span>}
@@ -104,7 +119,7 @@ export default function Sidebar({home, homePage}) {
                                   {following.includes(data._id) ? "following" : "follow"}</button>
                               </div>
                           ))}
-                    </div>
+                  </div>
               </div>
           </div>
       </div>

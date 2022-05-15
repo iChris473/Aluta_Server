@@ -66,4 +66,8 @@ export const chatScreen = atom({
     key:"mobileScreen",
     default: false
 })
+export const mobilView = atom({
+    key:"mobilView",
+    default: false
+})
 

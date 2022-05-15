@@ -7,6 +7,7 @@ import { useContext } from "react"
 import { AuthContext } from "../context/AuthContext";
 import { useRecoilState } from "recoil";
 import { filteredUsers, getPosts } from "../atoms/modalAtom";
+import {PF} from "../pf"
 
 export default function Feed({profile, UserProfile, home}) {
 
@@ -26,7 +27,7 @@ export default function Feed({profile, UserProfile, home}) {
     const fetchHomePost = async () => {
       if(profile || UserProfile){
         try {
-          const profileRes = await axios.get(`http://localhost:8800/api/post/timeline/${profile ? user._id : currentUser._id}?text=${searchedPosts}`)
+          const profileRes = await axios.get(`${PF}/api/post/timeline/${profile ? user._id : currentUser._id}?text=${searchedPosts}`)
           setPosts(profileRes.data)
           setLoading(false)
         } catch (err) {
@@ -35,7 +36,7 @@ export default function Feed({profile, UserProfile, home}) {
         }
       } else {
         try {
-          const homeRes = await axios.get(`http://localhost:8800/api/post/search?text=${searchedPosts}`)
+          const homeRes = await axios.get(`${PF}/api/post/search?text=${searchedPosts}`)
           setPosts(homeRes.data)
           setLoading(false)
         } catch (err) {

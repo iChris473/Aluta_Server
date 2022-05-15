@@ -1,6 +1,6 @@
 
 import { useRecoilState } from "recoil";
-import { commentSection, editCommentModal, logoutModal, openModal, settingsModal } from "../atoms/modalAtom";
+import { commentSection, editCommentModal, logoutModal, mobilView, openModal, settingsModal } from "../atoms/modalAtom";
 import Feed from "../components/Feed";
 import Modal from "../components/Modal";
 import Rightbar from "../components/Rightbar";
@@ -18,6 +18,7 @@ export default function Home() {
   const [commentMode, setCommentMode] = useRecoilState(commentSection)
   const [editCommentMode, setEditCommentMode] = useRecoilState(editCommentModal)
   const [logout, setLogout] = useRecoilState(logoutModal)
+  const [homeMobile, setHomeMobile] = useRecoilState(mobilView)
 
   return (
     <>
@@ -28,7 +29,7 @@ export default function Home() {
         {commentMode && <CommentModal />}
         {editCommentMode && <UpdateComment />}
         {logout && <LogoutModal />}
-        <div className=" grid overflow-x-hidden grid-cols-11">
+        <div className={`grid overflow-x-hidden grid-cols-11 ${homeMobile && "!hidden"} `}>
           <div className="hidden md:inline-grid col-span-2">
             <Sidebar home />
           </div>

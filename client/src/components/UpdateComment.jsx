@@ -32,7 +32,7 @@ export default function UpdateComment() {
                 oldComment: comment.comment.text,
                 time: comment.comment.time
               }
-              await axios.put('http://localhost:8800/api/post/comment/update', setComment)
+              await axios.put(`${PF}/api/post/comment/update`, setComment)
               setUpdating(false)
               setEditCommentMode(false)
               setCommentMode(true)
@@ -56,7 +56,7 @@ export default function UpdateComment() {
                 <div key={comment?.comment?.user.username + comment.text} className="flex gap-3 justify-start">
                   {comment?.comment?.user.profilePicture ? 
                   <img className="h-8 w-8 sm:h-10 sm:w-10 borderFull object-cover"
-                  src={PF+comment?.comment?.user?.profilePicture} alt='' /> : 
+                  src={comment?.comment?.user?.profilePicture} alt='' /> : 
                   <UserCircleIcon className='h-7 md:h-10 text-gray-500' />}
                   <div className='bg-gray-50 w-[88%] rounded-lg p-2 flex flex-col gap-10'>
                     <h3 className='font-bold text-gray-700 text-sm'>{comment?.comment?.user.username}</h3>

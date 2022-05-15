@@ -5,6 +5,7 @@ import { useRecoilState } from "recoil"
 import { getPosts, openModal, postID } from "../atoms/modalAtom"
 import { ref, deleteObject } from "firebase/storage";
 import storage from "../firebase"
+import { PF } from "../pf"
 
 export default function Modal() {
   const [deleting, setDeleting] = useState(false)
@@ -30,7 +31,7 @@ export default function Modal() {
 
         }
 
-        await axios.delete(`http://localhost:8800/api/post/delete/${postid.postid}`)
+        await axios.delete(`${PF}/api/post/delete/${postid.postid}`)
           .then(() => {
             setDeleting(false)
             setModalState(false);

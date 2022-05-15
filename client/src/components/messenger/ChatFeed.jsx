@@ -5,6 +5,7 @@ import { useRecoilState } from "recoil";
 import { activeUsers, chatTopbar, getAMessage } from "../../atoms/modalAtom";
 import { AuthContext } from "../../context/AuthContext";
 import Message from "./Message";
+import {PF} from "../../pf"
 
 
 export default function ChatFeed() {
@@ -25,27 +26,29 @@ export default function ChatFeed() {
         setCurrentMessage([])
       } else {
         if(!conversation[0].conversationId || conversation[0].conversationId === ""){
-          const conversationID  = await axios.get(`http://localhost:8800/api/chat/conversation?senderId=${user._id}&recieverId=${conversation[0]?.recieverId}`)
+          const conversationID  = await axios.get(`${PF}/api/chat/conversation?senderId=${user._id}&recieverId=${conversation[0]?.recieverId}`)
 
           !conversationID?.data[0]?._id ? setThisConversation("") : setThisConversation(conversationID?.data[0]?._id)
 
           // get Messages
-          const thisMessage = await axios.get(`http://localhost:8800/api/chat/message/get/${conversationID?.data[0]?._id}`)
+          const thisMessage = await axios.get(`${PF}/api/chat/message/get/${conversationID?.data[0]?._id}`)
 
           setCurrentMessage(thisMessage.data)
         }
           // get Messages
-          const thisMessage = await axios.get(`http://localhost:8800/api/chat/message/get/${conversation[0].conversationId}`)
+          const thisMessage = await axios.get(`${PF}/api/chat/message/get/${conversation[0].conversationId}`)
           setCurrentMessage(thisMessage.data) 
       }
     }
     fetchMessage()
   },[conversation, thisConversation])
+
+
   const sendMessage = async () => {
 
     let thisCurrentConversation = thisConversation;
     // check if theres already a conversation
-    const conversationID = await axios.get(`http://localhost:8800/api/chat/conversation?senderId=${user._id}&recieverId=${conversation[0]?.recieverId}`)
+    const conversationID = await axios.get(`${PF}/api/chat/conversation?senderId=${user._id}&recieverId=${conversation[0]?.recieverId}`)
 
     !conversationID?.data[0]?._id ? (thisCurrentConversation = "") : (thisCurrentConversation = conversationID?.data[0]?._id)
     let thisConversationID;
@@ -56,7 +59,7 @@ export default function ChatFeed() {
           senderId: user._id,
           recieverId: conversation[0].recieverId
         }
-        const res = await axios.post("http://localhost:8800/api/chat/conversation", newConversation)
+        const res = await axios.post(`${PF}/api/chat/conversation`, newConversation)
         setThisConversation(res.data._id)
         thisConversationID = res.data._id
       } catch (err) {
@@ -72,7 +75,7 @@ export default function ChatFeed() {
       }
       newMessage.conversationId = (thisCurrentConversation && thisCurrentConversation !== "") ? thisCurrentConversation : thisConversationID;
 
-      const res = await axios.post("http://localhost:8800/api/chat/message/send", newMessage)
+      const res = await axios.post(`${PF}/api/chat/message/send`, newMessage)
       newMessage._id = res.data._id
       // send message to socket server
       socket.current?.emit("sendMessage", {

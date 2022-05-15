@@ -17,7 +17,7 @@ export default function Conversation({data, online, active}) {
   // get conversations
   useEffect(() => {
     const getThisConversation = async () => {
-      const res = online ? await axios.get(`http://localhost:8800/api/user/${online.userId}`) : await axios.get(`http://localhost:8800/api/user/${(user._id == data.recieverId) ? data.senderId : data.recieverId}`)
+      const res = online ? await axios.get(`${PF}/api/user/${online.userId}`) : await axios.get(`${PF}/api/user/${(user._id == data.recieverId) ? data.senderId : data.recieverId}`)
       setThisConversation(res.data)
     }
     getThisConversation()
@@ -32,7 +32,7 @@ export default function Conversation({data, online, active}) {
           <div className="relative">
           {
             (thisConversation.profilePicture && thisConversation.profilePicture !== " ") ?
-            <img src={PF + thisConversation.profilePicture} className="h-14 w-14 borderFull object-cover" /> : 
+            <img src={thisConversation.profilePicture} className="h-14 w-14 borderFull object-cover" /> : 
             <UserCircleIcon className="h-14 text-gray-400" />
           }
           {(active?.includes(true) || online) && <span className="bg-green-500 p-[6px] borderFull absolute top-1 right-1 border border-white"></span>}

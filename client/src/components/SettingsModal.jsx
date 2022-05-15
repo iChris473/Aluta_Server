@@ -4,6 +4,7 @@ import { useRecoilState } from "recoil"
 import { settingsModal } from "../atoms/modalAtom"
 import { AuthContext } from "../context/AuthContext";
 import axios from 'axios'
+import {PF} from "../pf"
 
 export default function SettingsModal() {
     const [openSetting, setOpenSetting] = useRecoilState(settingsModal)
@@ -38,7 +39,7 @@ export default function SettingsModal() {
 
         if (confirmPassword.current.value == newPassword.current.value) {
             try {
-                await axios.put(`http://localhost:8800/api/user/update/${user._id}`, newPasswrd)
+                await axios.put(`${PF}/api/user/update/${user._id}`, newPasswrd)
                 setErrorMessage(false)
                 setPaswrdErrorMessage(false)
                 setPasswrdSuccess(true)
@@ -71,8 +72,8 @@ export default function SettingsModal() {
         }
 
         try {
-            await axios.put(`http://localhost:8800/api/user/update/${user._id}`, newPasswrd)
-            const getUpdatedUser = await axios.get(`http://localhost:8800/api/user/${user._id}`)
+            await axios.put(`${PF}/api/user/update/${user._id}`, newPasswrd)
+            const getUpdatedUser = await axios.get(`${PF}/api/user/${user._id}`)
             console.log(getUpdatedUser)
             dispatch({type: "LOGIN_SUCCESS", payload:getUpdatedUser.data});
             setErrorMessage(false)
